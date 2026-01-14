@@ -1,7 +1,7 @@
 import nltk
 import string
 from nltk.corpus import stopwords
-from traitement_url import data
+from TP2.src.treatement_url import data
 from save_json import save_json
 
 
@@ -33,7 +33,7 @@ def create_index_description_position(data):
     index_description = {}
     for dico in data:
         url = dico["url"]
-        mots_description = nettoyer_texte(dico["description"])
+        mots_description = clean_text(dico["description"])
         for i in range(len(mots_description)):
             if mots_description[i] in index_description.keys():
                 index_description[mots_description[i]].append((url, i))

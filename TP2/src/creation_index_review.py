@@ -1,7 +1,7 @@
-from traitement_url import data
-from enregistrer_json import enregistrer_json
+from TP2.src.treatement_url import data
+from save_json import save_json
 
-def creer_index_review(data):
+def create_index_review(data):
     index_review = {}
     for dico in data:
         url = dico["url"]
@@ -19,5 +19,5 @@ def creer_index_review(data):
     return index_review
 
 
-index_review = creer_index_review(data)
-enregistrer_json("reviews_index.json", index_review)
+index_review = create_index_review(data)
+save_json("reviews_index.json", index_review)
