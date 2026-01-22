@@ -1,4 +1,4 @@
-from TP2.src.treatement_url import data
+from treatement_url import data
 from save_json import save_json
 
 def create_index_review(data):
@@ -15,7 +15,7 @@ def create_index_review(data):
                 note = review["rating"]
                 note_total += note
             note_total = note_total/nb_review
-        index_review[url] = {"nb_review" : nb_review, "note_total" : note_total, "derniere_note" : note}
+        index_review[url] = {"nb_review" : nb_review, "total_score" : note_total, "last_score" : note}
     return index_review
 
 

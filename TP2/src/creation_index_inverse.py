@@ -1,7 +1,7 @@
 import nltk
 import string
 from nltk.corpus import stopwords
-from TP2.src.treatement_url import data
+from treatement_url import data
 from save_json import save_json
 
 

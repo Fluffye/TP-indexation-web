@@ -1,50 +1,60 @@
-import bm25s
-from filter_document import augmentation_request_by_synonyms, liste_index
-from read_json import synonyms, data, description_index, title_index, brand_index, origin_index
+
+from filter_document import filter_doc
+from read_json import data
+from algo_scoring import score_doc, review
 import math as m
-# donner plus de poids à ce qui est dans features et dans le titre, prendre les avis en compte, 
-N = len(data)
+import numpy as np
 
-avgdl = 0
-for page in data:
-    avgdl += page["description"]
-avgdl = avgdl/N
+weights = [30, 30, 20, 5, 1, 10, 5] 
 
-
-def frequency_token_document(token, doc):
-    if token in description_index:
-        freq_token = len(description_index[token][doc])
-    if token in title_index:
-        freq_token += len(title_index[token][doc])
-
-def document_frequency(token):
-    if token in description_index:
-        doc_freq = len(description_index[token])
-    if token in title_index:
-        doc_freq += len(title_index[token])
-    
-def lenght_doc(doc):
-    for page in data:
-        if doc == page["url"]:
-            return(len(page["description"]))
-        
-
-        
+# Function to find a page in rearranged_products with it's URL
+def get_document_by_url(url):
+    for doc in data:
+        if doc["url"] == url:
+            return doc
+    return None
 
 
-def bm25_score(query, doc, k1 = 1.2, b = 0.75):
-    tokens = augmentation_request_by_synonyms(query)
-    sum = 0
-    for token in tokens:
-        tf = frequency_token_document(token, doc)
-        df = document_frequency(token)
-        dl = lenght_doc(doc)
+def ranking(query, docs, weights = weights):
 
-        idf = m.log((N - df + 0.5) / (df + 0.5) + 1)
-        sum += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * dl / avgdl))
+    seen_titles = set()
 
-    return(sum)
+    ranking_list = []
+    for doc in docs:
+        page = get_document_by_url(doc)
+        title = page['title'].split("-")[0] # We get the title without it's variant
 
+        if title in seen_titles:
+            continue  # we ignore the variant of a page already there
+        seen_titles.add(title)
+
+
+        score = score_doc(query, weights, doc)
+
+        description = page['description']
+        dict = {"title" : title, "url" : doc, "description" : description, "score" : score}
+        ranking_list.append(dict)
+
+        ranking_list = sorted(
+            ranking_list,
+            key=lambda x: x["score"],
+            reverse=True
+        )
+    return ranking_list
+
+# Creation of a dictionary with the metadata and results from a query
+def create_dict_ranking(query, weights = weights):
+    docs = filter_doc(query)
+
+    nb_docs_total = len(data)
+    nb_docs_filtered = len(docs)
+    metadata = {"nb_docs_total" : nb_docs_total, "nb_docs_filtered" : nb_docs_filtered}
+
+    results = ranking(query, docs)
+
+    dict = {"query" : query, "metadata" : metadata, "results" : results}
+
+    return dict
 
 
 

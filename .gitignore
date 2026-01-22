@@ -1,1 +1,10 @@
-.venv
+# Environnements virtuels
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Sujets de TP en pdf
+*.pdf

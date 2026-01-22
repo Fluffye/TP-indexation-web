@@ -1,0 +1,5 @@
+import creation_index_brand
+import creation_index_inverse_position
+import creation_index_origin
+import creation_index_review
+

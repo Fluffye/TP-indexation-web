@@ -40,5 +40,5 @@ def add_infos_data(data):
 
 
 
-data_brute = parser_jsonl("TP2/input/products.jsonl")
+data_brute = parser_jsonl("input/products.jsonl")
 data = add_infos_data(data_brute)

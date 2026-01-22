@@ -1,14 +1,14 @@
 import nltk
 import string
 from nltk.corpus import stopwords
-from TP2.src.treatement_url import data
+from treatement_url import data
 from save_json import save_json
 
 
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
-def clean_texte(text):
+def clean_text(text):
     text = "".join([char for char in text if char not in string.punctuation])
     tokens = text.split(" ")
     clean = [word for word in tokens if word not in stop_words]
@@ -18,10 +18,14 @@ def create_index_title_position(data):
     index_title = {}
     for dico in data:
         url = dico["url"]
-        mots_title = clean_texte(dico["title"])
+        mots_title = clean_text(dico["title"])
         for i in range (len(mots_title)):
             if mots_title[i] in index_title.keys():
-                index_title[mots_title[i]].append((url, i))
+                if url in index_title[mots_title[i]]:
+                    index_title[mots_title[i]][url].append(i)
+                else:
+                    index_title[mots_title[i]] = [i]
+
             else:
                 index_title[mots_title[i]] = [(url, i)]
     return(index_title)
